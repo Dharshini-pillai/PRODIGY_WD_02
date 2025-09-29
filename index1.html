@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch Web Application</title>
+    
+    <style>
+        /* --- CSS STYLES --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+        }
+
+        h1 {
+            color: #1e3a8a; /* Dark blue title */
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .time-display {
+            font-size: 4em;
+            margin-bottom: 40px;
+            color: #333;
+            font-weight: 300;
+            letter-spacing: 3px;
+        }
+
+        .controls .btn {
+            padding: 12px 25px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .start-btn {
+            background-color: #10b981; /* Green for Start */
+        }
+
+        .start-btn:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+        }
+
+        .reset-btn {
+            background-color: #f87171; /* Red for Reset */
+        }
+
+        .reset-btn:hover {
+            background-color: #ef4444;
+            transform: translateY(-2px);
+        }
+
+        /* Style for the button when it's showing 'Stop' */
+        .stop-btn {
+            background-color: #f59e0b; /* Amber/Orange for Stop */
+        }
+
+        .stop-btn:hover {
+            background-color: #d97706;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stopwatch</h1>
+        <div class="time-display">
+            <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+        </div>
+        <div class="controls">
+            <button id="startStopBtn" class="btn start-btn">Start</button>
+            <button id="resetBtn" class="btn reset-btn">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+        let [hours, minutes, seconds] = [0, 0, 0];
+        let timer = null;
+        let isRunning = false;
+
+        const displayHours = document.getElementById("hours");
+        const displayMinutes = document.getElementById("minutes");
+        const displaySeconds = document.getElementById("seconds");
+        const startStopBtn = document.getElementById("startStopBtn");
+        const resetBtn = document.getElementById("resetBtn");
+
+        function stopwatch() {
+            seconds++;
+            if (seconds == 60) {
+                seconds = 0;
+                minutes++;
+                if (minutes == 60) {
+                    minutes = 0;
+                    hours++;
+                }
+            }
+
+            // Helper function to ensure two digits (e.g., 01 instead of 1)
+            const pad = (num) => (num < 10 ? "0" + num : num);
+
+            displayHours.innerHTML = pad(hours);
+            displayMinutes.innerHTML = pad(minutes);
+            displaySeconds.innerHTML = pad(seconds);
+        }
+
+        function startStop() {
+            if (isRunning) {
+                // Stop the stopwatch
+                clearInterval(timer);
+                startStopBtn.innerHTML = "Start";
+                startStopBtn.classList.remove('stop-btn');
+                startStopBtn.classList.add('start-btn');
+                isRunning = false;
+            } else {
+                // Start the stopwatch
+                // The interval calls the stopwatch function every 1000ms (1 second)
+                timer = setInterval(stopwatch, 1000); 
+                startStopBtn.innerHTML = "Stop";
+                startStopBtn.classList.remove('start-btn');
+                startStopBtn.classList.add('stop-btn');
+                isRunning = true;
+            }
+        }
+
+        function resetStopwatch() {
+            // Clear the interval first
+            clearInterval(timer);
+            [hours, minutes, seconds] = [0, 0, 0];
+            isRunning = false;
+
+            displayHours.innerHTML = "00";
+            displayMinutes.innerHTML = "00";
+            displaySeconds.innerHTML = "00";
+
+            startStopBtn.innerHTML = "Start";
+            startStopBtn.classList.remove('stop-btn');
+            startStopBtn.classList.add('start-btn');
+        }
+
+        // Attach event listeners to the buttons
+        startStopBtn.addEventListener('click', startStop);
+        resetBtn.addEventListener('click', resetStopwatch);
+    </script>
+</body>
+</html>
